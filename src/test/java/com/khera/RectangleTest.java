@@ -263,8 +263,8 @@ public class RectangleTest {
         for (int i = 0; i < 8; i++) {
             List<ShapeTestResult> results = processor.run(rectangle, other);
             List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
-//            results.forEach(result -> System.out.printf(" %s%n", result));
-//            System.out.println("---");
+            results.forEach(result -> System.out.printf(" %s%n", result));
+            System.out.println("---");
 
             // Verify test results
             if (i == 0) {
