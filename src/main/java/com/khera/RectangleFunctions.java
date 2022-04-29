@@ -9,10 +9,11 @@ public interface RectangleFunctions {
     default ShapeTestResult contains(Rectangle other) {
         boolean containsXAxis = false;
         boolean containsYAxis = false;
-        // Check if x and y points of other rectangle are within this rectangle
+        // Check that the x in BL and TR of other rectangle are in the bounds (width) of this rectangle BL and TR
         if ((other.getBottomLeft().getX() >= this.getBottomLeft().getX()) && (other.getTopRight().getX() <= this.getTopRight().getX())) {
             containsXAxis = true;
         }
+        // Check that the y in BL and TR of other rectangle are in the bounds (height) of this rectangle BL and TR
         if ((other.getBottomLeft().getY() >= this.getBottomLeft().getY()) && (other.getTopRight().getY() <= this.getTopRight().getY())) {
             containsYAxis = true;
         }
@@ -107,8 +108,12 @@ public interface RectangleFunctions {
         if (other.getTopRight().getY() < this.getBottomLeft().getY()) {
             skip = true;
         }
-        // skip test if other rectangle is at corner of this rectangle
+        // skip test if other rectangle is at bottom left corner of this rectangle
         if ((other.getTopRight().getY() == this.getBottomLeft().getY()) && (other.getBottomLeft().getX() == this.getTopRight().getX())) {
+            skip = true;
+        }
+        // skip test if other rectangle is at bottom right corner of this rectangle
+        if ((other.getTopRight().getY() == this.getBottomLeft().getY()) && (other.getBottomLeft().getX() >= this.getTopRight().getX())) {
             skip = true;
         }
 
@@ -123,7 +128,7 @@ public interface RectangleFunctions {
             } else if ((other.getTopRight().getX() > this.getTopRight().getX()) && (other.getBottomLeft().getX() < this.getBottomLeft().getX())) {
                 typeOfMatch = "SubLine";
                 result = true;
-            } else if ((other.getTopRight().getX() > this.getTopRight().getX()) || (other.getBottomLeft().getX() > this.getBottomLeft().getX())) {
+            } else if ((other.getTopRight().getX() > this.getTopRight().getX()) || (other.getBottomLeft().getX() >= this.getBottomLeft().getX())) {
                 typeOfMatch = "Partial";
                 result = true;
             }

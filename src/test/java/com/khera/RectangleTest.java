@@ -9,6 +9,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RectangleTest {
+    public static final String ANSI_WHITE = "\u001B[37m";
+    public static final String ANSI_GREEN = "\u001B[32m";
 
     @Test
     public void isAdjacenctOnLeft_rectangleIsAdjacenctToAnotherRectangle_true() {
@@ -102,8 +104,12 @@ public class RectangleTest {
 
     @Test
     public void isAdjacenctOnTop_rectangleIsAdjacenctToAnotherRectangle_false() {
-        Rectangle rectangle1 = new Rectangle(new Point(3, 1), new Point(4, 2));
-        Rectangle rectangle2 = new Rectangle(new Point(3, 2), new Point(4, 3));
+        Rectangle rectangle1 = new Rectangle(new Point(1, 1), new Point(4, 4));
+        Rectangle rectangle2 = new Rectangle(new Point(1, 0), new Point(2, 1));
+        assertTrue(rectangle1.isAdjacentOnBottom(rectangle2).isResult());
+
+        rectangle1 = new Rectangle(new Point(3, 1), new Point(4, 2));
+        rectangle2 = new Rectangle(new Point(3, 2), new Point(4, 3));
         assertTrue(rectangle1.isAdjacentOnTop(rectangle2).isResult());
 
         rectangle1 = new Rectangle(new Point(2, 1), new Point(5, 2));
@@ -147,8 +153,16 @@ public class RectangleTest {
 
     @Test
     public void contains_rectangleContainsAnotherRectangle_false() {
-        Rectangle rectangle1 = new Rectangle(new Point(1, 2), new Point(6, 4));
-        Rectangle rectangle2 = new Rectangle(new Point(2, 1), new Point(4, 3));
+        Rectangle rectangle1 = new Rectangle(new Point(1, 1), new Point(4, 4));
+        Rectangle rectangle2 = new Rectangle(new Point(2, 3), new Point(3, 5));
+        assertFalse(rectangle1.contains(rectangle2).isResult());
+
+        rectangle1 = new Rectangle(new Point(1, 1), new Point(4, 4));
+        rectangle2 = new Rectangle(new Point(1, 0), new Point(2, 1));
+        assertFalse(rectangle1.contains(rectangle2).isResult());
+
+        rectangle1 = new Rectangle(new Point(1, 2), new Point(6, 4));
+        rectangle2 = new Rectangle(new Point(2, 1), new Point(4, 3));
         assertFalse(rectangle1.contains(rectangle2).isResult());
 
         rectangle1 = new Rectangle(new Point(-1, -2), new Point(1, 2));
@@ -208,15 +222,14 @@ public class RectangleTest {
     }
 
     @Test
-    public void run_verticalMovement_true() {
+    public void run_verticalMovementCenter_true() {
         Processor processor = new Processor();
         Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
         Rectangle other = new Rectangle(new Point(2, -2), new Point(3, 0)); // Other
         for (int i = 0; i < 8; i++) {
             List<ShapeTestResult> results = processor.run(rectangle, other);
             List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
-//            results.forEach(result -> System.out.printf(" %s%n", result));
-//            System.out.println("---");
+            printTestResults(results);
 
             // Verify test results
             if (i == 0) {
@@ -256,15 +269,57 @@ public class RectangleTest {
     }
 
     @Test
-    public void run_horizontalMovement_true() {
+    public void run_horizontalMovementTop_true() {
+        Processor processor = new Processor();
+        Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
+        Rectangle other = new Rectangle(new Point(-1, 4), new Point(0, 5)); // Other
+        for (int i = 0; i < 8; i++) {
+            List<ShapeTestResult> results = processor.run(rectangle, other);
+            List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
+            //printTestResults(results);
+
+            // Verify test results
+            if (i == 0) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 1) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 2) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on bottom"));
+            }
+            if (i == 3) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (SubLine) on bottom"));
+            }
+            if (i == 4) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on bottom"));
+            }
+            if (i == 5) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 6) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 8) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+
+            // increment X coordinate
+            other = new Rectangle(new Point(other.getBottomLeft().getX() + 1, 0), new Point(other.getTopRight().getX() + 1, 1));
+        }
+    }
+    @Test
+    public void run_horizontalMovementCenter_true() {
         Processor processor = new Processor();
         Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
         Rectangle other = new Rectangle(new Point(-2, 2), new Point(0, 3)); // Other
         for (int i = 0; i < 8; i++) {
             List<ShapeTestResult> results = processor.run(rectangle, other);
             List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
-            results.forEach(result -> System.out.printf(" %s%n", result));
-            System.out.println("---");
+            //printTestResults(results);
 
             // Verify test results
             if (i == 0) {
@@ -302,6 +357,49 @@ public class RectangleTest {
             other = new Rectangle(new Point(other.getBottomLeft().getX() + 1, 2), new Point(other.getTopRight().getX() + 1, 3));
         }
     }
+    @Test
+    public void run_horizontalMovementBottom_true() {
+        Processor processor = new Processor();
+        Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
+        Rectangle other = new Rectangle(new Point(-1, 0), new Point(0, 1)); // Other
+        for (int i = 0; i < 8; i++) {
+            List<ShapeTestResult> results = processor.run(rectangle, other);
+            List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
+            //printTestResults(results);
+
+            // Verify test results
+            if (i == 0) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 1) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 2) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on bottom"));
+            }
+            if (i == 3) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (SubLine) on bottom"));
+            }
+            if (i == 4) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on bottom"));
+            }
+            if (i == 5) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 6) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 8) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+
+            // increment X coordinate
+            other = new Rectangle(new Point(other.getBottomLeft().getX() + 1, 0), new Point(other.getTopRight().getX() + 1, 1));
+        }
+    }
 
     @Test
     public void run_diagonalMovementLeftToRight_true() {
@@ -311,8 +409,7 @@ public class RectangleTest {
         for (int i = 0; i < 8; i++) {
             List<ShapeTestResult> results = processor.run(rectangle, other);
             List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
-//            results.forEach(result -> System.out.printf(" %s%n", result));
-//            System.out.println("---");
+            //printTestResults(results);
 
             // Verify test results
             if (i == 0) {
@@ -358,8 +455,7 @@ public class RectangleTest {
         for (int i = 0; i < 8; i++) {
             List<ShapeTestResult> results = processor.run(rectangle, other);
             List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
-//            results.forEach(result -> System.out.printf(" %s%n", result));
-//            System.out.println("---");
+            //printTestResults(results);
 
             // Verify test results
             if (i == 0) {
@@ -397,4 +493,14 @@ public class RectangleTest {
         }
     }
 
+    private void printTestResults(List<ShapeTestResult> results) {
+        results.forEach(result -> {
+            if (result.isResult()) {
+                System.out.printf(ANSI_GREEN + " %s%n", result);
+            } else {
+                System.out.printf(ANSI_WHITE + " %s%n", result);
+            }
+        });
+        System.out.println("---");
+    }
 }
