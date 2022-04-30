@@ -1,4 +1,6 @@
 com\khera\Rectangle.class
+com\khera\RectangleFunctions.class
 com\khera\Point.class
 com\khera\Processor.class
+com\khera\Shape.class
 com\khera\ShapeTestResult.class

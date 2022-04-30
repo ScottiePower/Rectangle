@@ -7,18 +7,24 @@ import java.util.Map;
 
 public class Processor {
 
+    public static final String ANSI_WHITE = "\u001B[37m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+
     public static void main(String[] args) {
         new Processor().process();
     }
-    private void process(){
+
+    private void process() {
         Map<String, List<Rectangle>> rectangles = buildTestData();
         rectangles.forEach((k, v) -> {
-                    System.out.printf("test for %s :%n",k);
-                    run(v.get(0), v.get(1)).forEach(result -> System.out.printf(" %s%n", result));
+                    System.out.printf("test for %s :%n", k);
+                    List<ShapeTestResult> results = run(v.get(0), v.get(1));
+                    printTestResults(results);
                 }
         );
     }
-    private Map<String, List<Rectangle>> buildTestData(){
+
+    private Map<String, List<Rectangle>> buildTestData() {
         Map<String, List<Rectangle>> rectangles = new HashMap<>();
         // Build some dummy data
         rectangles.put("Intersection", List.of(new Rectangle(new Point(1, 1), new Point(4, 3)),
@@ -30,7 +36,8 @@ public class Processor {
 
         return rectangles;
     }
-    public List<ShapeTestResult>  run(Rectangle rectangle1, Rectangle rectangle2) {
+
+    public List<ShapeTestResult> run(Rectangle rectangle1, Rectangle rectangle2) {
         List<ShapeTestResult> results = new ArrayList<>();
         if (isValid(rectangle1) && isValid(rectangle2)) {
 
@@ -41,8 +48,8 @@ public class Processor {
             results.add(rectangle1.contains(rectangle2));
 
             // Adjacently  tests
-            results.add(rectangle1.isAdjacentOnLeft(rectangle2));
             results.add(rectangle1.isAdjacentOnRight(rectangle2));
+            results.add(rectangle1.isAdjacentOnLeft(rectangle2));
             results.add(rectangle1.isAdjacentOnTop(rectangle2));
             results.add(rectangle1.isAdjacentOnBottom(rectangle2));
 
@@ -52,15 +59,25 @@ public class Processor {
 
     private boolean isValid(Rectangle rectangle1) {
         // check height - top right Y should not be less than bottom right Y
-        if(rectangle1.getTopRight().getY() < rectangle1.getBottomLeft().getY()){
+        if (rectangle1.getTopRight().getY() < rectangle1.getBottomLeft().getY()) {
             return false;
         }
         // check width - top right W should not be less than bottom right W
-        if(rectangle1.getTopRight().getX() < rectangle1.getBottomLeft().getX()){
+        if (rectangle1.getTopRight().getX() < rectangle1.getBottomLeft().getX()) {
             return false;
         }
         return true;
     }
 
+    private void printTestResults(List<ShapeTestResult> results) {
+        results.forEach(result -> {
+            if (result.isResult()) {
+                System.out.printf(ANSI_GREEN + " %s%n", result);
+            } else {
+                System.out.printf(ANSI_WHITE + " %s%n", result);
+            }
+        });
+        System.out.println("---");
+    }
 
 }
