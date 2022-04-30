@@ -279,6 +279,53 @@ public class RectangleTest {
     }
 
     @Test
+    public void run_verticalMovementCenterLeft_true() {
+        Processor processor = new Processor();
+        Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
+        Rectangle other = new Rectangle(new Point(1, -2), new Point(2, 0)); // Other
+        for (int i = 0; i < 8; i++) {
+            List<ShapeTestResult> results = processor.run(rectangle, other);
+            List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
+            printTestResults(results);
+
+            // Verify test results
+            if (i == 0) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 1) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on bottom"));
+            }
+            if (i == 2) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("intersects"));
+            }
+            if (i == 3) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("contains"));
+            }
+            if (i == 4) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("contains"));
+            }
+            if (i == 5) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("intersects"));
+            }
+            if (i == 6) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on top"));
+            }
+            if (i == 8) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+
+            // increment Y coordinate
+              other = new Rectangle(new Point(1, other.getBottomLeft().getY() + 1), new Point(2, other.getTopRight().getY() + 1));
+        }
+    }
+
+    @Test
     public void run_verticalMovementCenter_true() {
         Processor processor = new Processor();
         Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
@@ -325,6 +372,52 @@ public class RectangleTest {
         }
     }
 
+    @Test
+    public void run_verticalMovementCenterRight_true() {
+        Processor processor = new Processor();
+        Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
+        Rectangle other = new Rectangle(new Point(3, -2), new Point(4, 0)); // Other
+        for (int i = 0; i < 8; i++) {
+            List<ShapeTestResult> results = processor.run(rectangle, other);
+            List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
+            printTestResults(results);
+
+            // Verify test results
+            if (i == 0) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 1) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on bottom"));
+            }
+            if (i == 2) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("intersects"));
+            }
+            if (i == 3) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("contains"));
+            }
+            if (i == 4) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("contains"));
+            }
+            if (i == 5) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("intersects"));
+            }
+            if (i == 6) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on top"));
+            }
+            if (i == 8) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+
+            // increment Y coordinate
+            other = new Rectangle(new Point(3, other.getBottomLeft().getY() + 1), new Point(4, other.getTopRight().getY() + 1));
+        }
+    }
     @Test
     public void run_verticalMovementRight_true() {
         Processor processor = new Processor();
@@ -415,6 +508,53 @@ public class RectangleTest {
     }
 
     @Test
+    public void run_horizontalMovementCenterTop_true() {
+        Processor processor = new Processor();
+        Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
+        Rectangle other = new Rectangle(new Point(-2, 3), new Point(0, 4)); // Other
+        for (int i = 0; i < 8; i++) {
+            List<ShapeTestResult> results = processor.run(rectangle, other);
+            List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
+            printTestResults(results);
+
+            // Verify test results
+            if (i == 0) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 1) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on left"));
+            }
+            if (i == 2) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("intersects"));
+            }
+            if (i == 3) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("contains"));
+            }
+            if (i == 4) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("contains"));
+            }
+            if (i == 5) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("intersects"));
+            }
+            if (i == 6) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on right"));
+            }
+            if (i == 8) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+
+            // increment X coordinate
+            other = new Rectangle(new Point(other.getBottomLeft().getX() + 1, 1), new Point(other.getTopRight().getX() + 1, 2));
+        }
+    }
+
+    @Test
     public void run_horizontalMovementCenter_true() {
         Processor processor = new Processor();
         Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
@@ -458,6 +598,53 @@ public class RectangleTest {
 
             // increment X coordinate
             other = new Rectangle(new Point(other.getBottomLeft().getX() + 1, 2), new Point(other.getTopRight().getX() + 1, 3));
+        }
+    }
+
+    @Test
+    public void run_horizontalMovementCenterBelow_true() {
+        Processor processor = new Processor();
+        Rectangle rectangle = new Rectangle(new Point(1, 1), new Point(4, 4)); // This
+        Rectangle other = new Rectangle(new Point(-2, 1), new Point(0, 2)); // Other
+        for (int i = 0; i < 8; i++) {
+            List<ShapeTestResult> results = processor.run(rectangle, other);
+            List<ShapeTestResult> testsThatPassed = results.stream().filter(result -> result.isResult()).collect(Collectors.toList());
+            printTestResults(results);
+
+            // Verify test results
+            if (i == 0) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+            if (i == 1) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on left"));
+            }
+            if (i == 2) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("intersects"));
+            }
+            if (i == 3) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("contains"));
+            }
+            if (i == 4) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("contains"));
+            }
+            if (i == 5) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("intersects"));
+            }
+            if (i == 6) {
+                assertTrue(testsThatPassed.size() == 1);
+                assertTrue(testsThatPassed.get(0).getDescription().contains("is adjacent (Partial) on right"));
+            }
+            if (i == 8) {
+                assertTrue(testsThatPassed.isEmpty());
+            }
+
+            // increment X coordinate
+            other = new Rectangle(new Point(other.getBottomLeft().getX() + 1, 1), new Point(other.getTopRight().getX() + 1, 2));
         }
     }
 

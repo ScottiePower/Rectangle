@@ -96,7 +96,10 @@ public interface RectangleFunctions {
             } else if ((other.getBottomLeft().getX() < this.getBottomLeft().getX()) && (other.getTopRight().getX() > this.getTopRight().getX())) {
                 typeOfMatch = "SubLine";
                 result = true;
-            } else if ((other.getBottomLeft().getX() > this.getBottomLeft().getX()) || (other.getTopRight().getX() > this.getTopRight().getX())) {
+            } else if ((other.getBottomLeft().getX() > this.getBottomLeft().getX()) && (other.getBottomLeft().getX() <= this.getTopRight().getX())) {
+                typeOfMatch = "Partial";
+                result = true;
+            } else if ((other.getTopRight().getX() > this.getBottomLeft().getX()) && (other.getTopRight().getX() <= this.getTopRight().getX())) {
                 typeOfMatch = "Partial";
                 result = true;
             }
@@ -120,7 +123,10 @@ public interface RectangleFunctions {
             } else if ((other.getTopRight().getX() > this.getTopRight().getX()) && (other.getBottomLeft().getX() < this.getBottomLeft().getX())) {
                 typeOfMatch = "SubLine";
                 result = true;
-            } else if ((other.getTopRight().getX() > this.getTopRight().getX()) || (other.getBottomLeft().getX() >= this.getBottomLeft().getX())) {
+            } else if ((other.getBottomLeft().getX() > this.getBottomLeft().getX()) && (other.getBottomLeft().getX() <= this.getTopRight().getY())) {
+                typeOfMatch = "Partial";
+                result = true;
+            } else if ((other.getTopRight().getX() > this.getBottomLeft().getX()) && (other.getTopRight().getX() <= this.getTopRight().getX())) {
                 typeOfMatch = "Partial";
                 result = true;
             }
@@ -191,20 +197,12 @@ public interface RectangleFunctions {
 
     default ShapeTestResult intersects(Rectangle other) {
         boolean intersectsResult = false;
-        boolean skip = false;
-        // skip test if other rectangle is above or below this rectangle
-        if ((other.getBottomLeft().getY() > this.getTopRight().getY()) || (other.getTopRight().getY() < this.getBottomLeft().getY())) {
-            skip = true;
-        }
-        // skip test if other rectangle is left or right this rectangle
-        if ((other.getBottomLeft().getX() > this.getTopRight().getX()) || (other.getTopRight().getX() < this.getBottomLeft().getX())) {
-            skip = true;
-        }
+        boolean skip = isOutOfBounds(other) || isCorner(other);
 
         if (!contains(other).isResult() && !isAdjacent(other) && !skip) {
             // Check if X is in range and then check the Y
             // test if this tr.x is in the range of the other rectangle's width x range bl.x to tr.x
-            if ((this.getTopRight().getX() > other.getBottomLeft().getX()) && (this.getTopRight().getX() < other.getTopRight().getX())) {
+            if ((this.getTopRight().getX() > other.getBottomLeft().getX()) && (this.getTopRight().getX() <= other.getTopRight().getX())) {
                 if ((other.getTopRight().getY() <= this.getTopRight().getY()) && (other.getBottomLeft().getY() >= this.getBottomLeft().getY())) {
                     intersectsResult = true;
                 }
@@ -215,7 +213,8 @@ public interface RectangleFunctions {
                     intersectsResult = true;
                 }
             }
-            if ((other.getTopRight().getX() > this.getBottomLeft().getX()) && (other.getTopRight().getX() < this.getTopRight().getX())) {
+            // test if other tr.x is in the range of the this rectangle's width x range bl.x to tr.x
+            if ((other.getTopRight().getX() > this.getBottomLeft().getX()) && (other.getTopRight().getX() <= this.getTopRight().getX())) {
                 if ((other.getTopRight().getY() <= this.getTopRight().getY()) && (other.getBottomLeft().getY() >= this.getBottomLeft().getY())) {
                     intersectsResult = true;
                 }
@@ -225,11 +224,6 @@ public interface RectangleFunctions {
                 if ((other.getTopRight().getY() <= this.getTopRight().getY()) && (other.getBottomLeft().getY() <= this.getBottomLeft().getY())) {
                     intersectsResult = true;
                 }
-            }
-
-            // Diagonal use case - right to left
-            if ((this.getTopRight().getX() > other.getBottomLeft().getX()) && (other.getTopRight().getX() >= this.getTopRight().getX())) {
-                intersectsResult = true;
             }
         }
 
