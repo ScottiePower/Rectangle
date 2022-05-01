@@ -1,9 +1,6 @@
 package com.khera;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Processor {
 
@@ -11,17 +8,70 @@ public class Processor {
     public static final String ANSI_GREEN = "\u001B[32m";
 
     public static void main(String[] args) {
-        new Processor().process();
+        new Processor().process(args);
     }
 
-    private void process() {
-        Map<String, List<Rectangle>> rectangles = buildTestData();
+    private void process(String[] args) {
+        System.out.println("Note: If you wish to pass custom rectangles, Please use format '(X,Y:X,Y)' for each rectangle.");
+        System.out.println("The first X,Y coordinates represent the bottom left corner and the second X,Y coordinates represent the top right corner.");
+        System.out.println("Example: java -jar rectangle-1.0-SNAPSHOT.jar \"(1,1:6,4)\" \"(2,1:4,3)\" ");
+
+        Map<String, List<Rectangle>> rectangles = new HashMap<>();
+
+        if (args.length == 2) {
+            Rectangle r1 = buildRectangle(args[0]);
+            Rectangle r2 = buildRectangle(args[1]);
+            if (Objects.nonNull(r1) && Objects.nonNull(r2)) {
+                rectangles.put("User Input " + args[0] + " " + args[1], List.of(r1, r2));
+            }
+        } else {
+            rectangles = buildTestData();
+        }
+
         rectangles.forEach((k, v) -> {
                     System.out.printf("test for %s :%n", k);
                     List<ShapeTestResult> results = run(v.get(0), v.get(1));
                     printTestResults(results);
                 }
         );
+
+    }
+
+    private Rectangle buildRectangle(String input) {
+        try {
+            input = input.replaceAll(" ", "");
+            input = input.substring(1, input.length() - 1);
+            String[] tokens = input.split(":");
+            if (tokens.length == 2) {
+                Point bottomLeft = buildPoint(tokens[0]);
+                Point topRight = buildPoint(tokens[1]);
+                if (Objects.nonNull(bottomLeft) && Objects.nonNull(topRight)) {
+                    return new Rectangle(bottomLeft, topRight);
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("Invalid string representation of Rectangle.");
+            System.out.println("Please use format '(X,Y:X,Y)'");
+            System.out.println("The first X,Y coordinates represent the bottom left corner and the second X,Y coordinates represent the top right corner");
+
+        }
+        return null;
+    }
+
+    private Point buildPoint(String input) {
+        try {
+            String[] tokens = input.split(",");
+            if (tokens.length == 2) {
+                Integer x = Integer.valueOf(tokens[0]);
+                Integer y = Integer.valueOf(tokens[1]);
+                return new Point(x, y);
+            }
+
+        } catch (Exception ex) {
+            System.out.println("Invalid string representation of a Point.");
+            System.out.println("Please use format 'X,Y'");
+        }
+        return null;
     }
 
     private Map<String, List<Rectangle>> buildTestData() {
@@ -57,13 +107,15 @@ public class Processor {
         return results;
     }
 
-    private boolean isValid(Rectangle rectangle1) {
+    private boolean isValid(Rectangle rectangle) {
         // check height - top right Y should not be less than bottom right Y
-        if (rectangle1.getTopRight().getY() < rectangle1.getBottomLeft().getY()) {
+        if (rectangle.getTopRight().getY() <= rectangle.getBottomLeft().getY()) {
+            System.out.println("Rectangle has an invalid height, height must be greater than 1. " + rectangle);
             return false;
         }
         // check width - top right W should not be less than bottom right W
-        if (rectangle1.getTopRight().getX() < rectangle1.getBottomLeft().getX()) {
+        if (rectangle.getTopRight().getX() <= rectangle.getBottomLeft().getX()) {
+            System.out.println("Rectangle has an invalid width, height must be greater than 1. " + rectangle);
             return false;
         }
         return true;
